@@ -16,12 +16,13 @@ const addBookHandler = (request, h) => {
     } = request.payload;
     const id = nanoid(16);
     const insertedAt = new Date().toISOString();
-    const updateAt = insertedAt;
+    const updatedAt = insertedAt;
+    const finished = pageCount === readPage;
 
     if (!name) {
         const response = h.response({
             status: 'fail',
-            message: 'Gagal Menambahkan buku. Mohon isi nama buku'
+            message: 'Gagal menambahkan buku. Mohon isi nama buku'
         });
         response.code(400);
         return response;
@@ -39,8 +40,7 @@ const addBookHandler = (request, h) => {
     if (readPage > pageCount) {
         const response = h.response({
             status: 'fail',
-            message: 'Gagal menambahkan buku. readPage ' +
-                'tidak boleh lebih besar dari pageCount',
+            message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount'
         });
         response.code(400);
         return response;
@@ -55,9 +55,10 @@ const addBookHandler = (request, h) => {
         publisher,
         pageCount,
         readPage,
+        finished,
         reading,
         insertedAt,
-        updateAt,
+        updatedAt,
     };
 
     books.push(newBook);
@@ -181,6 +182,8 @@ const editBookByIdHandler = (request, h) => {
     const index = books.findIndex((book) => book.id === id);
 
     if (index !== -1) {
+        const finished = pageCount === readPage;
+
         books[index] = {
             ...books[index],
             name,
@@ -190,6 +193,7 @@ const editBookByIdHandler = (request, h) => {
             publisher,
             pageCount,
             readPage,
+            finished,
             reading,
             updatedAt: new Date().toISOString(),
         };
